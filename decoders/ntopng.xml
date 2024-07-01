@@ -1,0 +1,72 @@
+<!--
+Apr 26 08:25:26 192.168.1.2 ntopng[84982]:  [2024-04-19T18:20:15Z]  [Interface: em0] [Severity: Notice] [Flow] [Unidirectional Traffic] [2a01:9700:1631:8200:a00:27ff:fe05:7ff:13983 -> 2610:a1:31d1::53:53]  Unidirectional Traffic.
+Apr 26 08:25:26 192.168.1.2 ntopng[84982]:  [2024-04-19T18:51:05Z]  [Interface: wg0] [Severity: Critical] [Interface] [No Traffic Activity] [2] [Released] No activity reported on wg0 Network Interface.
+Apr 26 08:25:26 192.168.1.2 ntopng[36219]:  [2024-04-26T05:25:26Z]  [Interface: em0] [Severity: Notice] [Flow] [Unidirectional Traffic] [139.180.152.33 -> 192.168.1.2]  Unidirectional Traffic
+Apr 26 00:04:05 192.168.1.2 ntopng[36219]:  [2024-04-25T21:04:00Z]  [Severity: Error] [Interface] [Slow Periodic Activity] [-1] [Released] Periodic activity "5second" running for too long [more than 01:05] or executed too late (blocked in queue).
+Apr 21 20:11:24 192.168.1.2 ntopng[84982]:  [2024-04-21T17:11:24Z]  [Severity: Warning] [User] [Login Failed] [ansplab2024]  Login denied for user 'nil'.
+Apr 22 02:01:39 192.168.1.2 ntopng[36219]:  [2024-04-21T23:01:37Z]  [Severity: Notice] [System] [List Download Succeeded] [ThreatFox]  List 'ThreatFox' downloaded successfully
+
+-->
+
+<!--<decoder name="ntopng">-->
+<!--  <prematch>^ntopng[\d+]:</prematch>-->
+<!--</decoder>-->
+
+<!--type: Flow-->
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]  \[Interface: (\S+)\]\s+\[Severity: (\S+)\] \[(Flow)\] \[(.+?)\] \[(\S+):(\d+) -> (\S+):(\d+)\]\s*(.+)</regex>
+  <order>time,interface,severity,type,description,srcip,srcport,dstip,dstport,comment</order>
+</decoder>
+
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]  \[Interface: (\S+)\]\s+\[Severity: (\S+)\] \[(Flow)\] \[(.+?)\] \[(\S+) -> (\S+)\]\s*(.+)</regex>
+  <order>time,interface,severity,type,description,srcip,dstip,comment</order> <!--No Ports included-->
+</decoder>
+
+
+<!--type: Interface-->
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]  \[Interface: (\S+)\]\s+\[Severity: (\S+)\] \[(Interface)\] \[(.+?)\] \[([0-9-]+)\] \[(.+?)\]\s*(.+)</regex>
+  <order>time,interface,severity,type,description,if_num,action,comment</order>
+</decoder>
+
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]\s+\[Severity: (\S+)\] \[(Interface)\] \[(.+?)\] \[([0-9-]+)\] \[(.+?)\]\s*(.+)</regex>
+  <order>time,severity,type,description,if_num,action,comment</order><!--No Interface included-->
+</decoder>
+
+<!--type: User-->
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]\s+\[Severity: (\S+)\] \[(User)\] \[(.+?)\] \[(.+?)\]\s+(.+)</regex>
+  <order>time,severity,type,description,user_name,comment</order><!--No Interface included-->
+</decoder>
+
+<!--type: System-->
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]\s+\[Severity: (\S+)\] \[(System)\] \[(List Download Succeeded)\] \[(.+?)\]\s+(.+)</regex>
+  <order>time,severity,type,description,list_name,comment</order><!--No Interface included-->
+</decoder>
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]\s+\[Severity: (\S+)\] \[(System)\] \[(.+?)\]\s+(.+)</regex>
+  <order>time,severity,type,description,comment</order><!--No Interface included-->
+</decoder>
+
+<!--For other not-yet-observed types-->
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]  \[Interface: (\S+)\]\s+\[Severity: (\S+)\] \[(\w+)\]\s+(.+)</regex>
+  <order>time,interface,severity,type,comment</order>
+</decoder>
+
+<decoder name="ntopng-alert">
+  <parent>ntopng</parent>
+  <regex type="pcre2" offset="after_parent">^\s+\[(\S+)\]\s+\[Severity: (\S+)\] \[(\w+)\]\s+(.+)</regex>
+  <order>time,severity,type,comment</order><!--No Interface included-->
+</decoder>

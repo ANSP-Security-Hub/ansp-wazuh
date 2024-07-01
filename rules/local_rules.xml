@@ -1,0 +1,127 @@
+<!-- Local rules -->
+
+<!-- Modify it at your will. -->
+<!-- Copyright (C) 2015, Wazuh Inc. -->
+
+<!-- Example -->
+
+<group name="Network monitoring rules">
+  <rule id="103101" level="2">
+     <decoded_as>ntopng</decoded_as>
+     <field name="severity">Notice</field>
+     <description>NtopNG Notice Alert.</description>
+  </rule>
+  <rule id="103102" level="4">
+     <decoded_as>ntopng</decoded_as>
+     <field name="severity">Warning</field>
+     <description>NtopNG Warning Alert.</description>
+  </rule>
+  <rule id="103103" level="4">
+     <decoded_as>ntopng</decoded_as>
+     <field name="severity">Error</field>
+     <description>NtopNG Error Alert.</description>
+  </rule>
+  <rule id="103104" level="7">
+     <decoded_as>ntopng</decoded_as>
+     <field name="severity">Critical</field>
+     <description>NtopNG Critical Alert.</description>
+  </rule>
+  <rule id="103105" level="10">
+     <decoded_as>ntopng</decoded_as>
+     <field name="severity">Emergency</field>
+     <description>NtopNG Emergency Alert.</description>
+  </rule>
+  <rule id="103106" level="2">
+     <decoded_as>ntopng</decoded_as>
+     <description>NtopNG Unknown severity. (Give priority to any known severity regardless of level)</description>
+  </rule>
+  <rule id="103107" level="4">
+     <decoded_as>ntopng</decoded_as>
+     <if_sid>103106</if_sid>
+     <description>NtopNG Unknown severity.</description>
+  </rule>
+  
+  
+  <rule id="103113" level="1">
+    <decoded_as>netmon</decoded_as>
+    <description>Network monitor messages.</description>
+  </rule>
+
+</group>
+
+<group name="custom_pihole_rule">
+
+  <rule id="100110" level="3">
+    <decoded_as>pihole</decoded_as>
+    <options>no_log</options>
+    <field name="query_type">exactly blacklisted|gravity blocked</field>
+    <description>Blocked Domain</description>
+  </rule>
+
+  <rule id="100111" level="7" frequency="5" timeframe="60">
+    <if_matched_sid>100110</if_matched_sid>
+    <same_data />
+    <description>Multiple requests for blocked domain in a short time period</description>
+  </rule>
+  
+  <!--<rule id="100112" level="10" frequency="50" timeframe="86400">-->
+  <!--  <if_matched_sid>100110</if_matched_sid>-->
+  <!--  <same_data />-->
+  <!--  <description>Domain blocked more than 50 times in one day</description>-->
+  <!--</rule>-->
+
+
+  <!--<rule id="100112" level="3">-->
+  <!--  <decoded_as>pihole</decoded_as>-->
+  <!--  <options>no_log</options>-->
+  <!--  <field name="query_type">query[\w+]</field>-->
+  <!--  <description>Domains captured</description>-->
+  <!--</rule>-->
+
+  <!--<rule id="100113" level="5" frequency="5" timeframe="60">-->
+  <!--  <if_matched_sid>100112</if_matched_sid>-->
+  <!--  <same_data />-->
+  <!--  <description>Multiple Occurrences of Unique Domains Detected from Pi-hole</description>-->
+  <!--</rule>-->
+
+
+  <rule id="100114" level="1">
+    <decoded_as>pihole</decoded_as>
+    <field name="query_type">reply</field>
+    <description>DNS reply</description>
+  </rule>
+  
+  <!--<rule id="100115" level="4" frequency="5" timeframe="60">-->
+  <!--  <if_matched_sid>100114</if_matched_sid>-->
+  <!--  <same_data />-->
+  <!--  <description>Multiple requests for same domain in a short time period</description>-->
+  <!--</rule>-->
+  
+  <!--<rule id="100116" level="6" frequency="50" timeframe="86400">-->
+  <!--  <if_matched_sid>100114</if_matched_sid>-->
+  <!--  <same_data />-->
+  <!--  <description>Domain requested more than 50 times in one day</description>-->
+  <!--</rule>-->
+  
+  <!--<rule id="100116" level="3">-->
+  <!--  <decoded_as>pihole</decoded_as>-->
+  <!--  <description>Pihole logs</description>-->
+  <!--</rule>-->
+
+
+</group>
+
+<group name="local,syslog,sshd,">
+
+  <!--
+  Dec 10 01:02:02 host sshd[1234]: Failed none for root from 1.1.1.1 port 1066 ssh2
+  -->
+  <rule id="100001" level="5">
+    <if_sid>5716</if_sid>
+    <srcip>1.1.1.1</srcip>
+    <description>sshd: authentication failed from IP 1.1.1.1.</description>
+    <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+
+</group>
+

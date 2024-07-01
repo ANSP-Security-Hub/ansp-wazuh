@@ -1,0 +1,1 @@
+msiexec.exe /x wazuh-agent-4.7.2-1.msi /qn
